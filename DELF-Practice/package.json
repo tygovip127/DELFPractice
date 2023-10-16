@@ -1,0 +1,58 @@
+{
+  "name": "delf-practice",
+  "version": "1.0.0",
+  "description": "",
+  "main": "app.js",
+  "scripts": {
+    "start": "nodemon server.js",
+    "start:prod": "set NODE_ENV=production && node server",
+    "debug": "ndb server.js"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/tygovip127/DELF-Practice.git"
+  },
+  "author": "lephuquoc-phamtoanphuc",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/tygovip127/DELF-Practice/issues"
+  },
+  "homepage": "https://github.com/tygovip127/DELF-Practice#readme",
+  "dependencies": {
+    "axios": "^1.5.1",
+    "bcryptjs": "^2.4.3",
+    "cors": "^2.8.5",
+    "dotenv": "^16.0.3",
+    "express": "^4.18.2",
+    "express-session": "^1.17.3",
+    "googleapis": "^118.0.0",
+    "jsonwebtoken": "^9.0.0",
+    "moment": "^2.29.4",
+    "mongoose": "^6.10.0",
+    "morgan": "^1.10.0",
+    "multer": "^1.4.5-lts.1",
+    "nodemailer": "^6.9.1",
+    "passport": "^0.6.0",
+    "passport-google-oauth20": "^2.0.0",
+    "sharp": "^0.32.1",
+    "slugify": "^1.6.5",
+    "validator": "^13.9.0",
+    "xlsx": "^0.18.5"
+  },
+  "devDependencies": {
+    "eslint": "^8.34.0",
+    "eslint-config-airbnb": "^19.0.4",
+    "eslint-config-prettier": "^8.6.0",
+    "eslint-plugin-import": "^2.27.5",
+    "eslint-plugin-jsx-a11y": "^6.7.1",
+    "eslint-plugin-node": "^11.1.0",
+    "eslint-plugin-prettier": "^4.2.1",
+    "eslint-plugin-react": "^7.32.2",
+    "ndb": "^1.1.5",
+    "nodemon": "^2.0.20",
+    "prettier": "^2.8.4"
+  },
+  "engine": {
+    "node": ">=10.6.0"
+  }
+}
