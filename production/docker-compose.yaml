@@ -8,10 +8,12 @@ services:
     environment:
       - URL_REACT=http://localhost
     ports:
-      - 8080:8080
+      - 3000:3000
 
   nginx:
     image: nginx:1.23.3
+    depends_on:
+      - backend
     ports:
       - 80:80
     volumes:
