@@ -318,3 +318,7 @@ exports.ggLogin = catchAsync(async (req, res, next) => {
   console.log(user);
   createSendToken(user, 201, res);
 });
+
+exports.logout = () => {
+  
+}
