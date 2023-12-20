@@ -1,9 +1,7 @@
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 // @mui
 import { alpha } from '@mui/material/styles';
 import { Box, Divider, Typography, Stack, MenuItem, Avatar, IconButton, Popover } from '@mui/material';
-// mocks_
-import account from '../../../_mock/account';
 
 // ----------------------------------------------------------------------
 
@@ -26,6 +24,7 @@ const MENU_OPTIONS = [
 
 export default function AccountPopover() {
   const [open, setOpen] = useState(null);
+  const [account, setAccount] = useState(null);
 
   const handleOpen = (event) => {
     setOpen(event.currentTarget);
@@ -35,6 +34,10 @@ export default function AccountPopover() {
     setOpen(null);
   };
 
+  useEffect(() => {
+    console.log(JSON.parse(localStorage.getItem('account')));
+    setAccount(JSON.parse(localStorage.getItem('account')));
+  }, []);
   return (
     <>
       <IconButton
@@ -54,7 +57,7 @@ export default function AccountPopover() {
           }),
         }}
       >
-        <Avatar src={account.photoURL} alt="photoURL" />
+        <Avatar src={account?.avatar} alt="photoURL" />
       </IconButton>
 
       <Popover
@@ -78,10 +81,10 @@ export default function AccountPopover() {
       >
         <Box sx={{ my: 1.5, px: 2.5 }}>
           <Typography variant="subtitle2" noWrap>
-            {account.displayName}
+            {account?.name}
           </Typography>
           <Typography variant="body2" sx={{ color: 'text.secondary' }} noWrap>
-            {account.email}
+            {account?.email}
           </Typography>
         </Box>
 

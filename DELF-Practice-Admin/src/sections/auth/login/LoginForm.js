@@ -3,35 +3,47 @@ import { useNavigate } from 'react-router-dom';
 import Cookies from 'js-cookie';
 
 // @mui
-import { Link, Stack, IconButton, InputAdornment, TextField, Checkbox } from '@mui/material';
+import { Link, Stack, IconButton, InputAdornment, TextField, Checkbox, AlertTitle } from '@mui/material';
 import { LoadingButton } from '@mui/lab';
 // components
 import Iconify from '../../../components/iconify';
-import {login} from "../../../api/auth";
+import { login } from '../../../api/auth';
 
 // ----------------------------------------------------------------------
 
 export default function LoginForm() {
   const navigate = useNavigate();
-  const [email, setEmail] = useState('lpquoc.20it1@vku.udn.vn');
-  const [password, setPassword] = useState('1234567');
+  const [email, setEmail] = useState('');
+  const [password, setPassword] = useState('');
 
   const [showPassword, setShowPassword] = useState(false);
 
-  const handleClick = async () => {
-      const response = await login(email, password);
-      Cookies.set('jwt', response.token);
-      Cookies.set('jwt_refresh', response.refreshToken);
-      alert(Cookies.get('jwt'));
-      navigate('/dashboard', { replace: true });
+  const handleClick = () => {
+    login(email, password)
+      .then((response) => {
+        Cookies.set('jwt', response.token);
+        Cookies.set('jwt_refresh', response.refreshToken);
+        localStorage.setItem('account', JSON.stringify(response.data.user));
+        navigate('/dashboard', { replace: true });
+      })
+      .catch((err) => {
+        // AlertTitle(err);\
+        alert(err);
+      });
   };
 
   return (
     <>
       <Stack spacing={3}>
-        <TextField name="email" value={email} label="Email address" type={'email'} onChange={(event) => {
+        <TextField
+          name="email"
+          value={email}
+          label="Email address"
+          type={'email'}
+          onChange={(event) => {
             setEmail(event.target.value);
-        }}/>
+          }}
+        />
 
         <TextField
           name="password"
@@ -39,7 +51,7 @@ export default function LoginForm() {
           value={password}
           type={showPassword ? 'text' : 'password'}
           onChange={(event) => {
-              setPassword(event.target.value);
+            setPassword(event.target.value);
           }}
           InputProps={{
             endAdornment: (
