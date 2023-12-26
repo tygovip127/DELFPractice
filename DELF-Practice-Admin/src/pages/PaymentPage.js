@@ -3,6 +3,7 @@ import { filter } from 'lodash';
 import {useEffect, useState} from 'react';
 import axios from 'axios';
 import Cookies from 'js-cookie';
+import DocViewer, { DocViewerRenderers } from "@cyntler/react-doc-viewer";
 // @mui
 import {
   Card,
@@ -78,6 +79,7 @@ export default function PaymentPage() {
   const [money, setMoney] = useState(1);
   const [selectedFile, setSelectedFile] = useState();
   const [isSelected, setIsSelected] = useState(false);
+  const [uri, setUri] = useState();
   const paymentHandle = async () => {
     const token = Cookies.get('jwt');
     const response = await axios.post('http://localhost:3000/api/v1/payment/create_payment_url', {}, { headers: {
@@ -102,13 +104,16 @@ export default function PaymentPage() {
     setSelectedFile(event.target.files[0]);
     setIsSelected(true);
     console.log('alo', event.target.files[0]);
+    setUri(window.URL.createObjectURL(event.target.files[0]));
+    console.log(window.URL.createObjectURL(event.target.files[0]))
+
   };
 
   const submissionHandler = async () => {
     if (isSelected) {
       const formData = new FormData();
       formData.append('file', selectedFile);
-      formData.append('examination', '64e08299a4f66ec48c8c2fcd');
+      formData.append('examination', '658aebe3b227d878baf18799');
       const response = await axios.post('http://localhost:3000/api/v1/examinations/import-xlsx', formData);
       console.log(response.data)
     } else {
@@ -177,6 +182,14 @@ export default function PaymentPage() {
         ) : (
             <p>Select a file to show details</p>
         )}
+        {uri && <DocViewer documents={[
+          // eslint-disable-next-line global-require
+          {
+            uri,
+            fileType: 'xlsx',
+            fileName: selectedFile.name,
+          }, // Local File
+        ]} pluginRenderers={DocViewerRenderers} style={{height: 1000}}/>}
       </Container>
 
 
