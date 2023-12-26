@@ -4,6 +4,9 @@ import {useEffect, useState} from 'react';
 import axios from 'axios';
 import Cookies from 'js-cookie';
 import DocViewer, { DocViewerRenderers } from "@cyntler/react-doc-viewer";
+import '../assets/exam.css'; // Import the CSS file for styling
+import {ExcelRenderer, OutTable} from "react-excel-renderer";
+
 // @mui
 import {
   Card,
@@ -22,15 +25,8 @@ import {
   Typography,
   IconButton,
   TableContainer,
-  TablePagination,
+  TablePagination, TableHead,
 } from '@mui/material';
-// components
-import Iconify from '../components/iconify';
-import Scrollbar from '../components/scrollbar';
-// sections
-import { UserListHead, UserListToolbar } from '../sections/@dashboard/user';
-// mock
-import * as grammar from '../api/grammar';
 
 
 // ----------------------------------------------------------------------
@@ -80,6 +76,10 @@ export default function PaymentPage() {
   const [selectedFile, setSelectedFile] = useState();
   const [isSelected, setIsSelected] = useState(false);
   const [uri, setUri] = useState();
+  const [header, setHeader] = useState([]);
+  const [rows, setRows] = useState([]);
+
+
   const paymentHandle = async () => {
     const token = Cookies.get('jwt');
     const response = await axios.post('http://localhost:3000/api/v1/payment/create_payment_url', {}, { headers: {
@@ -104,7 +104,15 @@ export default function PaymentPage() {
     setSelectedFile(event.target.files[0]);
     setIsSelected(true);
     console.log('alo', event.target.files[0]);
-    setUri(window.URL.createObjectURL(event.target.files[0]));
+    ExcelRenderer(event.target.files[0], (err, res) => {
+      if(err) {
+        console.log(err)
+      } else {
+        const { cols, rows } = res;
+        setHeader(cols);
+        setRows(rows);
+      }
+    })
     console.log(window.URL.createObjectURL(event.target.files[0]))
 
   };
@@ -132,6 +140,7 @@ export default function PaymentPage() {
     });
     alert(JSON.stringify(response));
   }
+
   return (
     <>
       <Helmet>
@@ -182,17 +191,20 @@ export default function PaymentPage() {
         ) : (
             <p>Select a file to show details</p>
         )}
-        {uri && <DocViewer documents={[
-          // eslint-disable-next-line global-require
-          {
-            uri,
-            fileType: 'xlsx',
-            fileName: selectedFile.name,
-          }, // Local File
-        ]} pluginRenderers={DocViewerRenderers} style={{height: 1000}}/>}
+        {isSelected && <div style={{
+          width: '100%',
+          maxHeight: '1000px',
+          overflow: 'auto',
+          border: '1px solid #ccc',
+          padding: '10px',
+        }}>
+          <OutTable
+              data={rows}
+              columns={header}
+              tableClassName="excel-table"
+          />
+        </div>}
       </Container>
-
-
     </>
   );
 }
