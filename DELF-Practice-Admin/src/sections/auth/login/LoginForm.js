@@ -24,6 +24,7 @@ export default function LoginForm() {
         Cookies.set('jwt', response.token);
         Cookies.set('jwt_refresh', response.refreshToken);
         localStorage.setItem('account', JSON.stringify(response.data.user));
+        localStorage.setItem('token', JSON.stringify(response.token));
         navigate('/dashboard', { replace: true });
       })
       .catch((err) => {

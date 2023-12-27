@@ -1,11 +1,11 @@
 import { Helmet } from 'react-helmet-async';
 import { filter } from 'lodash';
-import {useEffect, useState} from 'react';
+import { useEffect, useState } from 'react';
 import axios from 'axios';
 import Cookies from 'js-cookie';
-import DocViewer, { DocViewerRenderers } from "@cyntler/react-doc-viewer";
+// import DocViewer, { DocViewerRenderers } from "@cyntler/react-doc-viewer";
 import '../assets/exam.css'; // Import the CSS file for styling
-import {ExcelRenderer, OutTable} from "react-excel-renderer";
+import { ExcelRenderer, OutTable } from 'react-excel-renderer';
 
 // @mui
 import {
@@ -25,9 +25,9 @@ import {
   Typography,
   IconButton,
   TableContainer,
-  TablePagination, TableHead,
+  TablePagination,
+  TableHead,
 } from '@mui/material';
-
 
 // ----------------------------------------------------------------------
 
@@ -79,42 +79,52 @@ export default function PaymentPage() {
   const [header, setHeader] = useState([]);
   const [rows, setRows] = useState([]);
 
-
   const paymentHandle = async () => {
     const token = Cookies.get('jwt');
-    const response = await axios.post('http://localhost:3000/api/v1/payment/create_payment_url', {}, { headers: {
-      Authorization: `Bearer ${token}`
-      }});
+    const response = await axios.post(
+      'http://localhost:3000/api/v1/payment/create_payment_url',
+      {},
+      {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      }
+    );
     window.location.replace(response.data.url);
-  }
+  };
   const refundHandle = async () => {
     const token = Cookies.get('jwt');
-    const res = await axios.post('http://localhost:3000/api/v1/payment/refund', {
-      id: '64cbd2743f951b67f5340ad7',
-      transDate: 20230803231505,
-      amount: 10000,
-      transType: '02',
-    }, { headers: {
-        Authorization: `Bearer ${token}`
-      }});
+    const res = await axios.post(
+      'http://localhost:3000/api/v1/payment/refund',
+      {
+        id: '64cbd2743f951b67f5340ad7',
+        transDate: 20230803231505,
+        amount: 10000,
+        transType: '02',
+      },
+      {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      }
+    );
     alert(res.data.message);
-  }
+  };
 
   const changeHandler = (event) => {
     setSelectedFile(event.target.files[0]);
     setIsSelected(true);
     console.log('alo', event.target.files[0]);
     ExcelRenderer(event.target.files[0], (err, res) => {
-      if(err) {
-        console.log(err)
+      if (err) {
+        console.log(err);
       } else {
         const { cols, rows } = res;
         setHeader(cols);
         setRows(rows);
       }
-    })
-    console.log(window.URL.createObjectURL(event.target.files[0]))
-
+    });
+    console.log(window.URL.createObjectURL(event.target.files[0]));
   };
 
   const submissionHandler = async () => {
@@ -123,11 +133,11 @@ export default function PaymentPage() {
       formData.append('file', selectedFile);
       formData.append('examination', '658aebe3b227d878baf18799');
       const response = await axios.post('http://localhost:3000/api/v1/examinations/import-xlsx', formData);
-      console.log(response.data)
+      console.log(response.data);
     } else {
-      alert('No file')
+      alert('No file');
     }
-  }
+  };
 
   const tokenHandle = async () => {
     const token = Cookies.get('jwt');
@@ -139,7 +149,7 @@ export default function PaymentPage() {
       },
     });
     alert(JSON.stringify(response));
-  }
+  };
 
   return (
     <>
@@ -152,7 +162,6 @@ export default function PaymentPage() {
           <Typography variant="h4" gutterBottom>
             Payment
           </Typography>
-
         </Stack>
         <Button variant="contained" onClick={paymentHandle}>
           Checkout VNPAY
@@ -163,47 +172,36 @@ export default function PaymentPage() {
         <Button variant="contained" onClick={tokenHandle}>
           Get User
         </Button>
-        <Button
-            variant="contained"
-            component="label"
-        >
+        <Button variant="contained" component="label">
           Upload File
-          <input
-              type="file"
-              hidden
-              name='file'
-              onChange={changeHandler}
-          />
+          <input type="file" hidden name="file" onChange={changeHandler} />
         </Button>
         <Button variant="contained" onClick={submissionHandler}>
           Submit
         </Button>
         {isSelected ? (
-            <div>
-              <p>Filename: {selectedFile.name}</p>
-              <p>Filetype: {selectedFile.type}</p>
-              <p>Size in bytes: {selectedFile.size}</p>
-              <p>
-                lastModifiedDate:{' '}
-                {selectedFile.lastModifiedDate.toLocaleDateString()}
-              </p>
-            </div>
+          <div>
+            <p>Filename: {selectedFile.name}</p>
+            <p>Filetype: {selectedFile.type}</p>
+            <p>Size in bytes: {selectedFile.size}</p>
+            <p>lastModifiedDate: {selectedFile.lastModifiedDate.toLocaleDateString()}</p>
+          </div>
         ) : (
-            <p>Select a file to show details</p>
+          <p>Select a file to show details</p>
         )}
-        {isSelected && <div style={{
-          width: '100%',
-          maxHeight: '1000px',
-          overflow: 'auto',
-          border: '1px solid #ccc',
-          padding: '10px',
-        }}>
-          <OutTable
-              data={rows}
-              columns={header}
-              tableClassName="excel-table"
-          />
-        </div>}
+        {isSelected && (
+          <div
+            style={{
+              width: '100%',
+              maxHeight: '1000px',
+              overflow: 'auto',
+              border: '1px solid #ccc',
+              padding: '10px',
+            }}
+          >
+            <OutTable data={rows} columns={header} tableClassName="excel-table" />
+          </div>
+        )}
       </Container>
     </>
   );
