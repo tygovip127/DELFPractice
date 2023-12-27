@@ -40,5 +40,6 @@ router
   .get(userController.getUser)
   .patch(userController.updateUser)
   .delete(userController.deleteUser);
+router.route('/active').post(userController.updateActiveStatus);
 
 module.exports = router;

@@ -1,7 +1,7 @@
 import { Helmet } from 'react-helmet-async';
 import { filter } from 'lodash';
 import { sentenceCase } from 'change-case';
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 // @mui
 import {
   Card,
@@ -22,24 +22,24 @@ import {
   TableContainer,
   TablePagination,
 } from '@mui/material';
+
+import { getAllUsers, toggleActiveUser } from '../api/user';
+
 // components
 import Label from '../components/label';
 import Iconify from '../components/iconify';
 import Scrollbar from '../components/scrollbar';
 // sections
 import { UserListHead, UserListToolbar } from '../sections/@dashboard/user';
-// mock
-import USERLIST from '../_mock/user';
 
 // ----------------------------------------------------------------------
 
 const TABLE_HEAD = [
   { id: 'name', label: 'Name', alignRight: false },
-  { id: 'company', label: 'Company', alignRight: false },
+  { id: 'email', label: 'Email', alignRight: false },
   { id: 'role', label: 'Role', alignRight: false },
-  { id: 'isVerified', label: 'Verified', alignRight: false },
   { id: 'status', label: 'Status', alignRight: false },
-  { id: '' },
+  // { id: '#', label: '#', alignRight: false },
 ];
 
 // ----------------------------------------------------------------------
@@ -75,18 +75,13 @@ function applySortFilter(array, comparator, query) {
 
 export default function UserPage() {
   const [open, setOpen] = useState(null);
-
   const [page, setPage] = useState(0);
-
   const [order, setOrder] = useState('asc');
-
   const [selected, setSelected] = useState([]);
-
   const [orderBy, setOrderBy] = useState('name');
-
   const [filterName, setFilterName] = useState('');
-
   const [rowsPerPage, setRowsPerPage] = useState(5);
+  const [users, setUsers] = useState([]);
 
   const handleOpenMenu = (event) => {
     setOpen(event.currentTarget);
@@ -104,7 +99,7 @@ export default function UserPage() {
 
   const handleSelectAllClick = (event) => {
     if (event.target.checked) {
-      const newSelecteds = USERLIST.map((n) => n.name);
+      const newSelecteds = users.map((n) => n.name);
       setSelected(newSelecteds);
       return;
     }
@@ -140,11 +135,23 @@ export default function UserPage() {
     setFilterName(event.target.value);
   };
 
-  const emptyRows = page > 0 ? Math.max(0, (1 + page) * rowsPerPage - USERLIST.length) : 0;
-
-  const filteredUsers = applySortFilter(USERLIST, getComparator(order, orderBy), filterName);
-
+  const emptyRows = page > 0 ? Math.max(0, (1 + page) * rowsPerPage - users.length) : 0;
+  const filteredUsers = applySortFilter(users, getComparator(order, orderBy), filterName);
   const isNotFound = !filteredUsers.length && !!filterName;
+
+  const fetchUsers = async () => {
+    const response = await getAllUsers();
+    setUsers(response.data);
+  };
+
+  const toggleActive = async (_id, active) => {
+    const response = await toggleActiveUser(_id, !active);
+    fetchUsers();
+  };
+
+  useEffect(() => {
+    fetchUsers();
+  }, []);
 
   return (
     <>
@@ -157,9 +164,9 @@ export default function UserPage() {
           <Typography variant="h4" gutterBottom>
             User
           </Typography>
-          <Button variant="contained" startIcon={<Iconify icon="eva:plus-fill" />}>
+          {/* <Button variant="contained" startIcon={<Iconify icon="eva:plus-fill" />}>
             New User
-          </Button>
+          </Button> */}
         </Stack>
 
         <Card>
@@ -172,46 +179,51 @@ export default function UserPage() {
                   order={order}
                   orderBy={orderBy}
                   headLabel={TABLE_HEAD}
-                  rowCount={USERLIST.length}
+                  rowCount={users.length}
                   numSelected={selected.length}
                   onRequestSort={handleRequestSort}
                   onSelectAllClick={handleSelectAllClick}
                 />
                 <TableBody>
-                  {filteredUsers.slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage).map((row) => {
-                    const { id, name, role, status, company, avatarUrl, isVerified } = row;
-                    const selectedUser = selected.indexOf(name) !== -1;
+                  {filteredUsers?.slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage).map((user) => {
+                    const selectedUser = selected.indexOf(user.name) !== -1;
 
                     return (
-                      <TableRow hover key={id} tabIndex={-1} role="checkbox" selected={selectedUser}>
+                      <TableRow hover key={user._id} tabIndex={-1} role="checkbox" selected={selectedUser}>
                         <TableCell padding="checkbox">
-                          <Checkbox checked={selectedUser} onChange={(event) => handleClick(event, name)} />
+                          <Checkbox checked={selectedUser} onChange={(event) => handleClick(event, user.name)} />
                         </TableCell>
 
                         <TableCell component="th" scope="row" padding="none">
                           <Stack direction="row" alignItems="center" spacing={2}>
-                            <Avatar alt={name} src={avatarUrl} />
+                            <Avatar alt={user.name} src={user?.avatar} />
                             <Typography variant="subtitle2" noWrap>
-                              {name}
+                              {user.name}
                             </Typography>
                           </Stack>
                         </TableCell>
-
-                        <TableCell align="left">{company}</TableCell>
-
-                        <TableCell align="left">{role}</TableCell>
-
-                        <TableCell align="left">{isVerified ? 'Yes' : 'No'}</TableCell>
-
+                        <TableCell align="left">{user.email}</TableCell>
+                        <TableCell align="left">{user.role}</TableCell>
                         <TableCell align="left">
-                          <Label color={(status === 'banned' && 'error') || 'success'}>{sentenceCase(status)}</Label>
+                          <Button
+                            color={user.active === false ? 'error' : 'success'}
+                            onClick={() => toggleActive(user._id, user.active)}
+                          >
+                            {sentenceCase(user.active === false ? 'InActive' : 'Active')}
+                          </Button>
                         </TableCell>
-
+                        {/* 
                         <TableCell align="right">
                           <IconButton size="large" color="inherit" onClick={handleOpenMenu}>
                             <Iconify icon={'eva:more-vertical-fill'} />
                           </IconButton>
-                        </TableCell>
+                        </TableCell> */}
+                        {/* <TableCell align="left">
+                          <div style={{ display: 'flex', color: 'red', alignItems: 'center' }}>
+                            <Iconify icon={'eva:trash-2-outline'} sx={{ mr: 2 }} />
+                            Delete
+                          </div>
+                        </TableCell> */}
                       </TableRow>
                     );
                   })}
@@ -252,7 +264,7 @@ export default function UserPage() {
           <TablePagination
             rowsPerPageOptions={[5, 10, 25]}
             component="div"
-            count={USERLIST.length}
+            count={filteredUsers.length}
             rowsPerPage={rowsPerPage}
             page={page}
             onPageChange={handleChangePage}
@@ -279,10 +291,10 @@ export default function UserPage() {
           },
         }}
       >
-        <MenuItem>
+        {/* <MenuItem>
           <Iconify icon={'eva:edit-fill'} sx={{ mr: 2 }} />
           Edit
-        </MenuItem>
+        </MenuItem> */}
 
         <MenuItem sx={{ color: 'error.main' }}>
           <Iconify icon={'eva:trash-2-outline'} sx={{ mr: 2 }} />

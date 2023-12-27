@@ -15,7 +15,7 @@ import PaymentPage from './pages/PaymentPage';
 // ----------------------------------------------------------------------
 
 export default function Router() {
-  const auth = JSON.parse(localStorage.getItem('account'));
+  const auth = JSON.parse(localStorage.getItem('token'));
 
   const routes = useRoutes([
     {
@@ -33,7 +33,7 @@ export default function Router() {
     },
     {
       path: 'login',
-      element: <LoginPage />,
+      element: auth ? <Navigate to="/dashboard/app" /> : <LoginPage />,
     },
     {
       element: <SimpleLayout />,
