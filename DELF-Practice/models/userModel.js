@@ -44,7 +44,6 @@ const userSchema = new mongoose.Schema({
   active: {
     type: Boolean,
     default: true,
-    select: false,
   },
   googleId: String,
 });
@@ -63,14 +62,14 @@ userSchema.pre('save', function (next) {
   next();
 });
 
-userSchema.pre(/^find/, function (next) {
-  this.find({
-    active: {
-      $ne: false,
-    },
-  });
-  next();
-});
+// userSchema.pre(/^find/, function (next) {
+//   this.find({
+//     active: {
+//       $ne: false,
+//     },
+//   });
+//   next();
+// });
 userSchema.methods.correctPassword = async (candidatePassword, userPassword) =>
   await bcrypt.compare(candidatePassword, userPassword);
 
