@@ -1,10 +1,10 @@
 import { Helmet } from 'react-helmet-async';
 import { filter } from 'lodash';
-import {useEffect, useState} from 'react';
+import { useEffect, useState } from 'react';
 import axios from 'axios';
 import Cookies from 'js-cookie';
 import '../assets/exam.css'; // Import the CSS file for styling
-import {ExcelRenderer, OutTable} from "react-excel-renderer";
+import { ExcelRenderer, OutTable } from 'react-excel-renderer';
 
 // @mui
 import {
@@ -24,11 +24,10 @@ import {
   Typography,
   IconButton,
   TableContainer,
-  TablePagination, TableHead,
+  TablePagination,
+  TableHead,
 } from '@mui/material';
 import {api} from "../api/config";
-
-
 
 function descendingComparator(a, b, orderBy) {
   if (b[orderBy] < a[orderBy]) {
@@ -67,7 +66,6 @@ export default function PaymentPage() {
   const [header, setHeader] = useState([]);
   const [rows, setRows] = useState([]);
 
-
   const paymentHandle = async () => {
     // console.log(JSON.stringify(Cookies.get()))
 
@@ -76,7 +74,7 @@ export default function PaymentPage() {
       Authorization: `Bearer ${token}`
       }});
     window.location.replace(response.data.url);
-  }
+  };
   const refundHandle = async () => {
     const token = Cookies.get('jwt');
     const res = await api.post('/payment/refund', {
@@ -88,23 +86,22 @@ export default function PaymentPage() {
         Authorization: `Bearer ${token}`
       }});
     alert(res.data.message);
-  }
+  };
 
   const changeHandler = (event) => {
     setSelectedFile(event.target.files[0]);
     setIsSelected(true);
     console.log('alo', event.target.files[0]);
     ExcelRenderer(event.target.files[0], (err, res) => {
-      if(err) {
-        console.log(err)
+      if (err) {
+        console.log(err);
       } else {
         const { cols, rows } = res;
         setHeader(cols);
         setRows(rows);
       }
-    })
-    console.log(window.URL.createObjectURL(event.target.files[0]))
-
+    });
+    console.log(window.URL.createObjectURL(event.target.files[0]));
   };
 
   const submissionHandler = async () => {
@@ -113,11 +110,11 @@ export default function PaymentPage() {
       formData.append('file', selectedFile);
       formData.append('examination', '658aebe3b227d878baf18799');
       const response = await axios.post('http://localhost:3000/api/v1/examinations/import-xlsx', formData);
-      console.log(response.data)
+      console.log(response.data);
     } else {
-      alert('No file')
+      alert('No file');
     }
-  }
+  };
 
   const tokenHandle = async () => {
     const token = Cookies.get('jwt');
@@ -129,7 +126,7 @@ export default function PaymentPage() {
       },
     });
     alert(JSON.stringify(response));
-  }
+  };
 
   return (
     <>
@@ -142,7 +139,6 @@ export default function PaymentPage() {
           <Typography variant="h4" gutterBottom>
             Payment
           </Typography>
-
         </Stack>
         <Button variant="contained" onClick={paymentHandle}>
           Checkout VNPAY
