@@ -22,6 +22,11 @@ const navConfig = [
     icon: icon('ic_user'),
   },
   {
+    title: 'examination',
+    path: '/dashboard/examinations',
+    icon: icon('ic_user'),
+  },
+  {
     title: 'payment',
     path: '/dashboard/payment',
     icon: icon('ic_user'),

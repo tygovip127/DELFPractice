@@ -3,7 +3,6 @@ import { filter } from 'lodash';
 import {useEffect, useState} from 'react';
 import axios from 'axios';
 import Cookies from 'js-cookie';
-import DocViewer, { DocViewerRenderers } from "@cyntler/react-doc-viewer";
 import '../assets/exam.css'; // Import the CSS file for styling
 import {ExcelRenderer, OutTable} from "react-excel-renderer";
 
@@ -27,20 +26,9 @@ import {
   TableContainer,
   TablePagination, TableHead,
 } from '@mui/material';
+import {api} from "../api/config";
 
 
-// ----------------------------------------------------------------------
-
-const TABLE_HEAD = [
-  { id: 'name', label: 'Name', alignRight: false },
-  { id: '', alignRight: false },
-  { id: '', alignRight: false },
-  { id: '', alignRight: false },
-  { id: '', alignRight: false },
-  { id: '' },
-];
-
-// ----------------------------------------------------------------------
 
 function descendingComparator(a, b, orderBy) {
   if (b[orderBy] < a[orderBy]) {
@@ -81,15 +69,17 @@ export default function PaymentPage() {
 
 
   const paymentHandle = async () => {
+    // console.log(JSON.stringify(Cookies.get()))
+
     const token = Cookies.get('jwt');
-    const response = await axios.post('http://localhost:3000/api/v1/payment/create_payment_url', {}, { headers: {
+    const response = await api.post('/payment/create_payment_url', {}, { headers: {
       Authorization: `Bearer ${token}`
       }});
     window.location.replace(response.data.url);
   }
   const refundHandle = async () => {
     const token = Cookies.get('jwt');
-    const res = await axios.post('http://localhost:3000/api/v1/payment/refund', {
+    const res = await api.post('/payment/refund', {
       id: '64cbd2743f951b67f5340ad7',
       transDate: 20230803231505,
       amount: 10000,
@@ -157,53 +147,6 @@ export default function PaymentPage() {
         <Button variant="contained" onClick={paymentHandle}>
           Checkout VNPAY
         </Button>
-        <Button variant="contained" onClick={refundHandle}>
-          Refund VNPAY
-        </Button>
-        <Button variant="contained" onClick={tokenHandle}>
-          Get User
-        </Button>
-        <Button
-            variant="contained"
-            component="label"
-        >
-          Upload File
-          <input
-              type="file"
-              hidden
-              name='file'
-              onChange={changeHandler}
-          />
-        </Button>
-        <Button variant="contained" onClick={submissionHandler}>
-          Submit
-        </Button>
-        {isSelected ? (
-            <div>
-              <p>Filename: {selectedFile.name}</p>
-              <p>Filetype: {selectedFile.type}</p>
-              <p>Size in bytes: {selectedFile.size}</p>
-              <p>
-                lastModifiedDate:{' '}
-                {selectedFile.lastModifiedDate.toLocaleDateString()}
-              </p>
-            </div>
-        ) : (
-            <p>Select a file to show details</p>
-        )}
-        {isSelected && <div style={{
-          width: '100%',
-          maxHeight: '1000px',
-          overflow: 'auto',
-          border: '1px solid #ccc',
-          padding: '10px',
-        }}>
-          <OutTable
-              data={rows}
-              columns={header}
-              tableClassName="excel-table"
-          />
-        </div>}
       </Container>
     </>
   );

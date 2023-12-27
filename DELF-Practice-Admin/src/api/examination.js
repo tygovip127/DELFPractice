@@ -1,8 +1,8 @@
 import { api } from './config'
 
-export const getAllExaminations = async (type) => {
+export const getAllExaminations = async () => {
     try {
-        const response = await api.get(`/examinations?type=${type}`);
+        const response = await api.get(`/examinations`);
         console.log(response.data);
         return response.data
     } catch (error) {
