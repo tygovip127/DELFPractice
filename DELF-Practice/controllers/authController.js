@@ -90,6 +90,7 @@ exports.login = catchAsync(async (req, res, next) => {
   if (!user) return next(new AppError('Incorrect email', 401));
   const correct = await user.correctPassword(password, user.password);
   if (!correct) return next(new AppError('Incorrect password', 401));
+  if (!user.active) return next(new AppError('Account is inactive', 403));
 
   createSendToken(user, 201, res);
 });
