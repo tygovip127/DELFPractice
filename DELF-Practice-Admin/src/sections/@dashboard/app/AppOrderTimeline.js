@@ -14,6 +14,7 @@ AppOrderTimeline.propTypes = {
 };
 
 export default function AppOrderTimeline({ title, subheader, list, ...other }) {
+  console.log(list);
   return (
     <Card {...other}>
       <CardHeader title={title} subheader={subheader} />
@@ -48,6 +49,8 @@ OrderItem.propTypes = {
 
 function OrderItem({ item, isLast }) {
   const { type, title, time } = item;
+  const datetime = new Date(parseInt(time, 10));
+
   return (
     <TimelineItem>
       <TimelineSeparator>
@@ -67,7 +70,7 @@ function OrderItem({ item, isLast }) {
         <Typography variant="subtitle2">{title}</Typography>
 
         <Typography variant="caption" sx={{ color: 'text.secondary' }}>
-          {fDateTime(time)}
+          {`${datetime}`}
         </Typography>
       </TimelineContent>
     </TimelineItem>
