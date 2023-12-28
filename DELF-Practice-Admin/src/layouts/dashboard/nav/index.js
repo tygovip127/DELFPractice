@@ -50,7 +50,7 @@ export default function Nav({ openNav, onCloseNav }) {
   }, [pathname]);
 
   useEffect(() => {
-    const token = Cookies.get('jwt');
+    const token = localStorage.getItem('token');
     api.get('/users/me', {}, { headers: {
         Authorization: `Bearer ${token}`
       }}).then(response => {
