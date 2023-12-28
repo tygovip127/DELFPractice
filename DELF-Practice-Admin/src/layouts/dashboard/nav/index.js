@@ -75,6 +75,7 @@ export default function Nav({ openNav, onCloseNav }) {
                 {account?.role}
               </Typography>
             </Box>
+            {account?.role === 'vip' && <Avatar sx={{ml: 'auto', mr: 0}} src={`/assets/images/users/crown.png`} alt="photoURL"/>}
           </StyledAccount>
         </Link>
       </Box>

@@ -4,6 +4,7 @@
 
 const express = require('express');
 const Transaction = require('../models/transactionModel');
+const User = require('../models/userModel');
 const authController = require('../controllers/authController');
 
 const router = express.Router();
@@ -145,6 +146,14 @@ router.get('/vnpay_return', async (req, res, next) => {
         runValidators: true,
       }
     );
+    const user = await User.findByIdAndUpdate(
+      transaction.user,
+      { role: 'vip' },
+      {
+        new: true,
+        runValidators: true,
+      }
+    );
     // res.status(200).json({
     //   status: 'success',
     //   data: transaction,
@@ -164,7 +173,7 @@ router.get('/vnpay_return', async (req, res, next) => {
     // });
   }
 
-  res.redirect('http://localhost:3006/dashboard/payment');
+  res.redirect(`${process.env.URL_REACT}/dashboard/payment`);
 });
 
 router.get('/vnpay_ipn', async (req, res, next) => {
