@@ -1,10 +1,10 @@
 import { useEffect, useState } from 'react';
-import { getSummary } from 'src/api/dashboard';
 import { Helmet } from 'react-helmet-async';
 import { faker } from '@faker-js/faker';
 // @mui
 import { useTheme } from '@mui/material/styles';
 import { Grid, Container, Typography } from '@mui/material';
+import { getSummary } from '../api/dashboard';
 // components
 import Iconify from '../components/iconify';
 // sections
