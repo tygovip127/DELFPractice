@@ -56,7 +56,7 @@ export default function Nav({ openNav, onCloseNav }) {
       }}).then(response => {
       setAccount(response.data.data);
     });
-  }, []);
+  }, [localStorage.getItem('token')]);
   const renderContent = (
     <Scrollbar
       sx={{
