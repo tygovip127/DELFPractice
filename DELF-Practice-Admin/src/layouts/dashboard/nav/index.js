@@ -7,6 +7,7 @@ import { Box, Link, Button, Drawer, Typography, Avatar, Stack } from '@mui/mater
 // mock
 // import account from '../../../_mock/account';
 // hooks
+import Cookies from "js-cookie";
 import useResponsive from '../../../hooks/useResponsive';
 // components
 import Logo from '../../../components/logo';
@@ -14,6 +15,7 @@ import Scrollbar from '../../../components/scrollbar';
 import NavSection from '../../../components/nav-section';
 //
 import navConfig from './config';
+import {api} from "../../../api/config";
 
 // ----------------------------------------------------------------------
 
@@ -48,7 +50,12 @@ export default function Nav({ openNav, onCloseNav }) {
   }, [pathname]);
 
   useEffect(() => {
-    setAccount(JSON.parse(localStorage.getItem('account')));
+    const token = Cookies.get('jwt');
+    api.get('/users/me', {}, { headers: {
+        Authorization: `Bearer ${token}`
+      }}).then(response => {
+      setAccount(response.data.data);
+    });
   }, []);
   const renderContent = (
     <Scrollbar

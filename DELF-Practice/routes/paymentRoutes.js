@@ -114,6 +114,40 @@ router.post(
   }
 );
 
+router.get('/test', async (req, res) => {
+  const transaction = await Transaction.findByIdAndUpdate(
+    '658d5a8d2e22afa4cf72ddb2',
+    {
+      vnp_Amount: 10000,
+      vnp_BankCode: 'NCB',
+      vnp_BankTranNo: 'VNP14263945',
+      vnp_CardType: 'ATM',
+      vnp_OrderInfo: 'Nang+cap+VIP',
+      vnp_PayDate: '20231228182305',
+      vnp_ResponseCode: '00',
+      vnp_TmnCode: 'Q3OF5JFS',
+      vnp_TransactionNo: '14263945',
+      vnp_TransactionStatus: '00',
+      vnp_TxnRef: '658d5a8d2e22afa4cf72ddb2',
+    },
+    {
+      new: true,
+      runValidators: true,
+    }
+  );
+  console.log(JSON.stringify(transaction.user));
+  const user = await User.findByIdAndUpdate(
+    transaction.user,
+    { role: 'vip' },
+    {
+      new: true,
+      runValidators: true,
+    }
+  );
+  res.status(200).json({
+    user,
+  });
+});
 router.get('/vnpay_return', async (req, res, next) => {
   let vnpParams = req.query;
 
