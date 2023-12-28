@@ -50,13 +50,14 @@ export default function Nav({ openNav, onCloseNav }) {
   }, [pathname]);
 
   useEffect(() => {
-    const token = localStorage.getItem('token');
-    api.get('/users/me', {}, { headers: {
-        Authorization: `Bearer ${token}`
-      }}).then(response => {
+    api.get('/users/me', {
+      headers: {
+        Authorization: `Bearer ${JSON.parse(localStorage.getItem('token'))}`
+      }
+    }).then(response => {
       setAccount(response.data.data);
     });
-  }, [localStorage.getItem('token')]);
+  }, []);
   const renderContent = (
     <Scrollbar
       sx={{
