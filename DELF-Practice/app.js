@@ -15,6 +15,7 @@ const answerRouter = require('./routes/answerRoutes');
 const exerciseRouter = require('./routes/exerciseRoutes');
 const favoriteRouter = require('./routes/favoriteRoutes');
 const paymentRouter = require('./routes/paymentRoutes');
+const dashboardRouter = require('./routes/dashboardRoutes');
 
 const app = express();
 
@@ -40,6 +41,8 @@ app.use('/api/v1/answers', answerRouter);
 app.use('/api/v1/exercises', exerciseRouter);
 app.use('/api/v1/favorites', favoriteRouter);
 app.use('/api/v1/payment', paymentRouter);
+app.use('/api/v1/dashboard', dashboardRouter);
+
 app.use('*', (req, res, next) => {
   next(new AppError(`Can't find ${req.originalUrl} on this server!`, 404));
 });
