@@ -173,7 +173,7 @@ router.get('/vnpay_return', async (req, res, next) => {
     // });
   }
 
-  res.redirect(`www.delfpratice.id.vn/dashboard/payment`);
+  res.redirect(`http://www.delfpratice.id.vn/dashboard/payment`);
 });
 
 router.get('/vnpay_ipn', async (req, res, next) => {
